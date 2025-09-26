@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1758873626512,
+      "tag": "0000_kind_phalanx",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1758873864935,
+      "tag": "0001_curvy_bloodaxe",
+      "breakpoints": true
+    }
+  ]
+}
