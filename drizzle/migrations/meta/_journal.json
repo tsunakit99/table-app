@@ -15,6 +15,13 @@
       "when": 1758873864935,
       "tag": "0001_curvy_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1758908428042,
+      "tag": "0002_salty_lenny_balinger",
+      "breakpoints": true
     }
   ]
 }
