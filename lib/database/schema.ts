@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, primaryKey } from 'drizzle-orm/sqlite-core';
 import { relations } from 'drizzle-orm';
 
 // ============== テーブル定義 ==============
@@ -8,10 +8,13 @@ export const users = sqliteTable('users', {
   id: text('id').primaryKey(), // Auth.jsのユーザーID
   email: text('email').notNull().unique(),
   role: text('role', { enum: ['member', 'admin'] }).notNull().default('member'),
-  birthDate: integer('birth_date', { mode: 'timestamp' }).notNull(),
+  birthDate: integer('birth_date', { mode: 'timestamp' }),
   favoriteDrink: text('favorite_drink').references(() => drinks.id),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  name: text('name'),
+  image: text('image'),
+  emailVerified: integer('email_verified', { mode: 'timestamp' })
 });
 
 // 2. drinks（ドリンクマスタ）
@@ -59,7 +62,40 @@ export const calendar = sqliteTable('calendar', {
     closedDates: text('closed_dates').notNull(), // JSON文字列 '["2025-01-01", "2025-01-15"]'
     updatedBy: text('updated_by').references(() => users.id),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
-  });
+});
+
+// Auth.js required tables
+export const accounts = sqliteTable('accounts', {
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(),
+  provider: text('provider').notNull(),
+  providerAccountId: text('provider_account_id').notNull(),
+  refresh_token: text('refresh_token'),
+  access_token: text('access_token'),
+  expires_at: integer('expires_at'),
+  token_type: text('token_type'),
+  scope: text('scope'),
+  id_token: text('id_token'),
+  session_state: text('session_state'),
+}, (account) => ({
+  compoundKey: primaryKey({
+    columns: [account.provider, account.providerAccountId],
+  }),
+}));
+
+export const sessions = sqliteTable('sessions', {
+  sessionToken: text('session_token').notNull().primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  expires: integer('expires', { mode: 'timestamp' }).notNull(),
+});
+
+export const verificationTokens = sqliteTable('verification_tokens', {
+  identifier: text('identifier').notNull(),
+  token: text('token').notNull(),
+  expires: integer('expires', { mode: 'timestamp' }).notNull(),
+}, (vt) => ({
+  compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+}));
 
 // 7. menu_categories（メニューカテゴリ）
 export const menuCategories = sqliteTable('menu_categories', {
