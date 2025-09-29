@@ -1,7 +1,15 @@
-import NextAuth from "next-auth"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { db } from "../database"
-import { accounts, sessions, users, verificationTokens } from "../database/schema"
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { eq } from "drizzle-orm";
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { db } from "../database";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "../database/schema";
+import { verifyPassword } from "./password";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db, {
@@ -10,7 +18,47 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
   }),
-  providers: [],
+  providers: [
+    Credentials({
+      name: "メールアドレスとパスワード",
+      credentials: {
+        email: { label: "メールアドレス", type: "email" },
+        password: { label: "パスワード", type: "password" },
+      },
+      async authorize(credentials) {
+        const rawEmail = credentials?.email;
+        const rawPassword = credentials?.password;
+
+        if (typeof rawEmail !== "string" || typeof rawPassword !== "string") {
+          return null;
+        }
+
+        const email = rawEmail.trim().toLowerCase();
+        const password = rawPassword;
+
+        const user = await db.query.users.findFirst({
+          where: eq(users.email, email),
+        });
+
+        if (!user) {
+          return null;
+        }
+
+        const isValid = await verifyPassword(password, user.passwordHash);
+
+        if (!isValid) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name ?? undefined,
+          role: user.role,
+        };
+      },
+    }),
+  ],
   session: {
     strategy: "database",
   },
@@ -18,7 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        session.user.role = (user as any).role || 'member';
+        session.user.role = (user as any).role || "member";
       }
       return session;
     },
@@ -30,4 +78,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
     error: "/auth/error",
   },
-})
+});
