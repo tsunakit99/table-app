@@ -1,3 +1,3 @@
-import { handlers } from "../../../../lib/auth/index"
+import { handlers } from "../../../../lib/auth/index";
 
-export const { GET, POST } = handlers
+export const { GET, POST } = handlers;

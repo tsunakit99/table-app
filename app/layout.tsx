@@ -46,9 +46,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} ${robotoMono.variable} antialiased`}>
-        <AuthSessionProvider>
-          {children}
-        </AuthSessionProvider>
+        <AuthSessionProvider>{children}</AuthSessionProvider>
       </body>
     </html>
   );
