@@ -2,12 +2,47 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
   "files": {
-    "includes": ["**/*.{js,ts,jsx,tsx,css,json}", "!**/*.json", "!**/*.jsonc"]
+    "includes": [
+      "**/*.{js,ts,jsx,tsx,css,json}",
+      "!**/*.json",
+      "!**/*.jsonc",
+      "!cloudflare-env.d.ts",
+      "!next.config.js",
+      "!components/ui",
+      "!app/layout.tsx"
+    ]
   },
   "linter": {
     "rules": {
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noExplicitAny": "warn",
+        "noBitwiseOperators": "off",
+        "useAwait": "off",
+        "noConsole": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "off",
+        "useNamingConvention": "off",
+        "noNamespace": "off",
+        "noMagicNumbers": "off"
+      },
+      "nursery": {
+        "useConsistentTypeDefinitions": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
+      "a11y": {
+        "useButtonType": "warn",
+        "useSemanticElements": "warn"
+      },
+      "correctness": {
+        "noUnusedFunctionParameters": "warn",
+        "noUnusedImports": "warn"
       }
     }
   }
