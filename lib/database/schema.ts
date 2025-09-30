@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import {
   integer,
   primaryKey,
-  real,
   sqliteTable,
   text,
 } from "drizzle-orm/sqlite-core";
