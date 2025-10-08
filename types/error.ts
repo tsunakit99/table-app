@@ -1,12 +1,28 @@
-export type AppError = {
+// API Error Response
+export type ApiErrorResponse = {
+  error: {
+    code: string;
+    message: string;
+    details?: unknown;
+  };
+};
+
+// Custom Error Class for API
+export class ApiError extends Error {
   code: string;
-  message: string;
-  details?: string;
-};
+  statusCode: number;
+  details?: unknown;
 
-export type ErrorType = "validation" | "authentication" | "network" | "unknown";
-
-export type FormError = {
-  type: ErrorType;
-  message: string;
-};
+  constructor(
+    code: string,
+    message: string,
+    statusCode = 500,
+    details?: unknown
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.code = code;
+    this.statusCode = statusCode;
+    this.details = details;
+  }
+}
