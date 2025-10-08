@@ -9,7 +9,8 @@
       "!cloudflare-env.d.ts",
       "!next.config.js",
       "!components/ui",
-      "!app/layout.tsx"
+      "!app/layout.tsx",
+      "!lib/database/index.ts"
     ]
   },
   "linter": {
