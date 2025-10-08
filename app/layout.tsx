@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import AuthSessionProvider from "../features/auth/providers/session-provider";
+import AuthSessionProvider from "../features/routes/auth/components/session-provider";
 
 // Next.js 14で利用可能なフォントに変更
 const inter = Inter({
@@ -17,6 +17,13 @@ const robotoMono = Roboto_Mono({
 export const metadata: Metadata = {
   title: "居食屋たーぶる",
   description: "A table management application",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
