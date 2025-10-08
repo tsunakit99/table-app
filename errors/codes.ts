@@ -1,0 +1,7 @@
+export const ERROR_CODES = {
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+  HTTP_ERROR: "HTTP_ERROR",
+} as const;
+
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
