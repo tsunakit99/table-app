@@ -1,43 +1,29 @@
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { auth } from "./lib/auth";
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+export default function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  // Public routes that don't require authentication
-  const publicRoutes = ["/", "/auth/signin", "/auth/error"];
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-
-  // API routes that don't require authentication
-  const publicApiRoutes = ["/api/auth"];
-  const isPublicApiRoute = publicApiRoutes.some((route) =>
-    nextUrl.pathname.startsWith(route)
-  );
-
-  // Allow public routes and auth API routes
-  if (isPublicRoute || isPublicApiRoute) {
+  // サインイン画面は除外
+  if (pathname.startsWith("/auth")) {
     return NextResponse.next();
   }
 
-  // Redirect to sign-in if not authenticated
-  if (!isLoggedIn) {
-    return NextResponse.redirect(new URL("/auth/signin", nextUrl));
-  }
-
-  // Admin-only routes
-  const adminRoutes = ["/admin"];
-  const isAdminRoute = adminRoutes.some((route) =>
-    nextUrl.pathname.startsWith(route)
-  );
-
-  if (isAdminRoute && req.auth?.user?.role !== "admin") {
-    return NextResponse.redirect(new URL("/", nextUrl));
+  // Cookie にセッションがなければリダイレクト
+  const hasSession = req.cookies.get("authjs.session-token");
+  if (!hasSession) {
+    return NextResponse.redirect(new URL("/auth/signin", req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|sw.js|manifest).*)"],
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sw\\.js|workbox-.*\\.js|manifest\\.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/", // トップページも含める
+    "/dashboard/:path*",
+    "/settings/:path*",
+    "/admin/:path*",
+  ],
 };
