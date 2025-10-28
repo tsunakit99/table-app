@@ -20,9 +20,10 @@
 	},
 	"d1_databases": [
 		{
-			"binding": "table_app",
+			"binding": "DB",
 			"database_name": "table-app",
-			"database_id": "84710f20-aeab-46c8-b574-1469a6742e22"
+			"database_id": "84710f20-aeab-46c8-b574-1469a6742e22",
+			"preview_database_id": "84710f20-aeab-46c8-b574-1469a6742e22"
 		}
 	]
 	/**
